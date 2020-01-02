@@ -1,0 +1,52 @@
+fmod NATLIST is
+  protecting NAT .
+  protecting BOOL .
+  
+  sorts NeList List .
+  subsort NeList < List .
+
+  op [] : -> List .
+  op _:_ : Nat List -> NeList .
+  op _++_ : List List -> List .
+  op sumlist : List -> Nat .
+  op listmax : NeList -> Nat .
+  op sortlist : List -> List .
+  op _in_ : Nat List -> Bool .
+
+  vars N M C : Nat .
+  vars L L' : List .
+
+  eq [] ++ L = L .
+  eq (N : L) ++ L' = N : (L ++ L') .
+
+  eq N in N : L = true .
+  eq N in [] = false .
+  eq N in M : L = N in L .
+
+  eq sumlist([]) = 0 .
+  eq sumlist(N : L) = N + sumlist(L) .
+
+  eq listmax(L) = $listmax(L, 0) .
+  op $listmax : NeList Nat -> Nat .
+  eq $listmax([], C) = C .
+  eq $listmax(N : L, C) = $listmax(L, max(N, C)) .
+
+  eq sortlist([]) = [] .
+  ceq sortlist(N : L) = sortlist(L) ++ (N : []) if listmax(L) <= N .
+  ceq sortlist(N : L) = sortlist(L ++ (N : [])) if listmax(L) > N .
+endfm
+
+red 1 : 2 : 3 : [] .
+red 90 : 90 : 100 : 2 : 0 : 250 : [] .
+
+red 1 in 90 : 90 : 100 : 2 : 0 : 250 : [] .
+red 90 in 90 : 90 : 100 : 2 : 0 : 250 : [] .
+
+red sumlist(90 : 90 : 100 : 2 : 0 : 250 : []) .
+red sumlist(1 : 2 : 3 : []) .
+
+red listmax(1 : 2 : 3 : []) .
+red listmax(90 : 90 : 100 : 2 : 0 : 250 : []) .
+
+red sortlist(90 : 90 : 100 : 2 : 0 : 250 : []) .
+red sortlist([]) .
